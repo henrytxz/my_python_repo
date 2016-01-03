@@ -11,10 +11,10 @@ class Solution:
 		i=0
 		j=0
 		k=0
-		print 'm:',m
-		print 'n:',n
+		#print 'm:',m
+		#print 'n:',n
 		while i<m or j<n:
-			print 'i:',i
+		#	print 'i:',i
 			if i==m:
 				c[k]=B[j]
 				j=j+1
@@ -27,13 +27,13 @@ class Solution:
 			else: 
 				c[k]=A[i]
 				i=i+1
-			print 'k:',k
+		#	print 'k:',k
 			k=k+1		
 		
 		for a in A:
 			A.remove(a)
 		
-		print "c:",c
+		#print "c:",c
 			
 		for cc in c:
 			A.append(cc)
@@ -41,7 +41,7 @@ class Solution:
 		#A=copy.copy(c)
 		#for 
 		#A.append(1)
-		print "A:",A
+		#print "A:",A
 
 if __name__ == '__main__':
 	s = Solution()
