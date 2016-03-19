@@ -1,4 +1,4 @@
-directions = ['r','d','l','u']
+
 
 """
 keep_going = {
@@ -17,10 +17,7 @@ def keep_going(mat, curr_pos, last_dir):
     else:
         raise Exception('wrong direction {0} specified!'.format(direction))
 
-def next_direction(last_dir):
-    if last_dir == None: # this is true at move 0
-        return directions[0]
-    return directions[(directions.index(last_dir)+1)%4]
+
 
 def going_right_done(mat, curr):
     if curr[1]==mat_dim: return True
@@ -39,41 +36,74 @@ def going_up_done(mat, curr):
     if curr[1]==mat_dim: return True
     if mat[curr[0]-2, curr[1]]==1: return True
 
-def done(mat, curr, last_dir):
-    if last_dir==None: # this is true at move 0
-        return False
-    else:
-        direction = next_direction(last_dir)
-        mat_dim = len(mat)
-        # if direction == 'r' and (
+
+
+def init_starting_point(curr_col, curr_row, mat):
+  print 'curr_row {0}, curr_col {1}'.format(curr_row, curr_col)
+  print 'mat[curr_row] {0}'.format(mat[curr_row])
+  print 'mat[curr_row][curr_col] {0}'.format(mat[curr_row][curr_col])
+  mat[curr_row][curr_col] = 1
+  print 'mat[curr_row][curr_col] {0}'.format(mat[curr_row][curr_col])
 
 def spiralize(size):
-    # Make a snake
+    # init mat
     mat = [[0]*size]*size
-    print mat
-    curr = [0,0]
-    # dir = 'r' # go right first
-    # go right till u have to turn then go down till u turn left, etc.
-    # while possible, keep going
-    # while not done(mat, curr, last_dir):
-    #     new = keep_going(mat, curr, last_dir)
-    return mat
+    # print mat
+    curr_row, curr_col = 0,0
+    init_starting_point(curr_col, curr_row, mat)
+    bar = Go(mat, curr_row, curr_col, last_dir=None)
+    return bar.get_matrix()
 
-class Test:
+class Go:
+  directions = ['r','d','l','u']
+
+  def __init__(self, mat, curr_row, curr_col, last_dir):
+    self.mat = mat
+    self.curr_row = curr_row
+    self.curr_col = curr_col
+    self.last_dir = last_dir
+    while not self.done():
+      self.keep_going()
+
+  def get_matrix(self):
+    return self.mat
+
+  def done(self):
+    return True
+    # direction = next_direction(last_dir)
+    # mat_dim = len(mat)
+    # if direction == 'r' and (
+
+  @classmethod
+  def next_direction(self, last_dir):
+    if last_dir == None: # this is true at move 0
+        return Go.directions[0]
+    return Go.directions[(Go.directions.index(last_dir)+1)%4]
+
+  def keep_going(self):
+    pass
+
+
+class Foo:
   @staticmethod
   def assert_equals(x, y):
-    assert x==y
+    try:
+      assert x==y
+    except:
+      print 'assert failed'
+      print 'x:{0}'.format(x)
+      print 'y:{0}'.format(y)
 
 if __name__ == '__main__':
-  assert next_direction(None) == 'r'
-  assert next_direction('r') == 'd'
-  assert next_direction('d') == 'l'
-  assert next_direction('l') == 'u'
-  assert next_direction('u') == 'r'
+  assert Go.next_direction(None) == 'r'
+  assert Go.next_direction('r') == 'd'
+  assert Go.next_direction('d') == 'l'
+  assert Go.next_direction('l') == 'u'
+  assert Go.next_direction('u') == 'r'
 
-  Test.assert_equals(spiralize(1), [[1]])
-  # Test.assert_equals(spiralize(2), [[1,1],
-  #                                   [0,1]])
+  # Foo.assert_equals(spiralize(1), [[1]])
+  Foo.assert_equals(spiralize(2), [[1,1],
+                                   [0,1]])
   # Test.assert_equals(spiralize(3), [[1,1,1],
   #                                   [0,0,1],
   #                                   [1,1,1]])
