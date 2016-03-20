@@ -26,61 +26,42 @@ class Go(object):
         self.direction = direction
         self.direction_and_number_steps = {}
         self.number_steps_in_direction = 0
-        self.num_bad_moves = 0
 
     def run(self):
         """
         hp stands for hypothetical position
         :return:
         """
-        while not self.done():
+        while True:
             hp = self.direction.step(self.curr_pos)
-            if self.bad_move():
-                self.num_bad_moves+=1
+            if self.bad_move(hp):
                 self.direction = self.direction.change_direction()
                 hp = self.direction.step(self.curr_pos)
-                if self.bad_move():
-                    self.num_bad_moves+=1
+                if self.bad_move(hp):
+                    break   # 2 bad moves means the end of the spiral
+            # print 'going from {0} to {1}'.format(self.curr_pos, hp)
+            self.curr_pos = hp
+            row, col = self.curr_pos
+            self.mat[row][col] = 1
 
+    def bad_move(self, position):
+        if self.out_of_bound(position): return True
+        num_visited_neighbors = 0
+        row, col = position
+        num_visited_neighbors += self.check_neighbor_visited((row, col - 1))
+        num_visited_neighbors += self.check_neighbor_visited((row, col + 1))
+        num_visited_neighbors += self.check_neighbor_visited((row - 1, col))
+        num_visited_neighbors += self.check_neighbor_visited((row + 1, col))
+        if num_visited_neighbors > 1: return True
 
-    def switch_direction(self):
-        self.direction = self.direction.change_direction()
-        self.direction_and_number_steps[str(self.direction)] = self.number_steps_in_direction
-        return True
+    def check_neighbor_visited(self, hp):
+        row, col = hp
+        if not self.out_of_bound(hp) and self.mat[row][col] == 1:   # todo: draw Venn diagram
+            return 1
+        return 0
 
-    def done_with_direction(self):
-        hypothetical_pos = self.direction.step(self.curr_pos)
-        if self.out_of_bound(hypothetical_pos):
-            return self.switch_direction()
-
-        # if taking 2 steps would overlap another point of the spiral => done
-        hypothetical_pos = self.direction.step(hypothetical_pos)
-        row, col = hypothetical_pos
-        if not self.out_of_bound(hypothetical_pos) \
-                and self.mat[row][col] == 1:
-            return self.switch_direction()
-
-
-
-        return False
-
-    def keep_going_in_1_direction(self):
-        while not self.done_with_direction():
-            self.step()
-
-    def done(self):
-        return self.num_bad_moves > 1
-
-    def step(self):
-        row, col = self.curr_pos
-        self.mat[row][col] = 1  # mark as visited
-        new_pos = self.direction.step(self.curr_pos)
-        print 'going from {0} to {1}'.format(self.curr_pos, new_pos)
-        self.curr_pos = new_pos
-        self.number_steps_in_direction += 1
-
-    def out_of_bound(self, hypothetical_pos):
-        row, col = hypothetical_pos
+    def out_of_bound(self, hp):
+        row, col = hp
         if row >= len(self.mat) or row<0: return True
         if col >= len(self.mat) or col<0: return True
         return False
@@ -106,38 +87,39 @@ def print_list_of_lists(ll):
     for row in ll:
       print row
 
-
-      
 if __name__ == '__main__':
-    m2 = make_matrix(size=2)
-    assert Go(m2, (0,0), Right()).done_with_direction() is False
-    assert Go(m2, (0,1), Right()).done_with_direction() is True
-    m3 = [[1,1,1],
-          [0,0,1],
-          [1,1,1]]
-    assert Go(m3, (2,0), Up()).done_with_direction() is True
+    # m2 = make_matrix(size=2)
+    # assert Go(m2, (0,0), Right()).done_with_direction() is False
+    # assert Go(m2, (0,1), Right()).done_with_direction() is True
+    # assert Go(m2, (0,0), Right()).out_of_bound()
+    #
+    # m3 = [[1,1,1],
+    #       [0,0,1],
+    #       [1,1,1]]
+    # assert Go(m3, (2,0), Up()).done_with_direction() is True
     # assert Go(m2, (0,1), Up()).done_with_direction() is True
 
     Validate.assert_equals(spiralize(1), [[1]])
+    print '='*88
     Validate.assert_equals(spiralize(2), [[1,1],
                                           [0,1]])
-    # Validate.assert_equals(spiralize(3), [[1,1,1],
-    #                                       [0,0,1],
-    #                                       [1,1,1]])
-    # Validate.assert_equals(spiralize(5), [[1,1,1,1,1],
-    #                                   [0,0,0,0,1],
-    #                                   [1,1,1,0,1],
-    #                                   [1,0,0,0,1],
-    #                                   [1,1,1,1,1]])
-    # Validate.assert_equals(spiralize(8), [[1,1,1,1,1,1,1,1],
-    #                                   [0,0,0,0,0,0,0,1],
-    #                                   [1,1,1,1,1,1,0,1],
-    #                                   [1,0,0,0,0,1,0,1],
-    #                                   [1,0,1,0,0,1,0,1],
-    #                                   [1,0,1,1,1,1,0,1],
-    #                                   [1,0,0,0,0,0,0,1],
-    #                                   [1,1,1,1,1,1,1,1]])
-    
-    
-    
-    
+    print '='*88
+    Validate.assert_equals(spiralize(3), [[1,1,1],
+                                          [0,0,1],
+                                          [1,1,1]])
+    print '='*88
+    Validate.assert_equals(spiralize(5), [[1,1,1,1,1],
+                                      [0,0,0,0,1],
+                                      [1,1,1,0,1],
+                                      [1,0,0,0,1],
+                                      [1,1,1,1,1]])
+    print '='*88
+    Validate.assert_equals(spiralize(8), [[1,1,1,1,1,1,1,1],
+                                      [0,0,0,0,0,0,0,1],
+                                      [1,1,1,1,1,1,0,1],
+                                      [1,0,0,0,0,1,0,1],
+                                      [1,0,1,0,0,1,0,1],
+                                      [1,0,1,1,1,1,0,1],
+                                      [1,0,0,0,0,0,0,1],
+                                      [1,1,1,1,1,1,1,1]])
+    print '='*88
