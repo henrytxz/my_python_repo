@@ -6,8 +6,9 @@ def spiralize(size):
     mat[0][0] = 1
     # direction = 'r'
     go_algo = Go(mat, (0,0), Right())
-    while not go_algo.done():
-        go_algo.keep_going_in_1_direction()
+    go_algo.run()
+    # while not go_algo.done():
+    #     go_algo.keep_going_in_1_direction()
     return mat
 
 class Go(object):
@@ -25,6 +26,22 @@ class Go(object):
         self.direction = direction
         self.direction_and_number_steps = {}
         self.number_steps_in_direction = 0
+        self.num_bad_moves = 0
+
+    def run(self):
+        """
+        hp stands for hypothetical position
+        :return:
+        """
+        while not self.done():
+            hp = self.direction.step(self.curr_pos)
+            if self.bad_move():
+                self.num_bad_moves+=1
+                self.direction = self.direction.change_direction()
+                hp = self.direction.step(self.curr_pos)
+                if self.bad_move():
+                    self.num_bad_moves+=1
+
 
     def switch_direction(self):
         self.direction = self.direction.change_direction()
@@ -52,12 +69,7 @@ class Go(object):
             self.step()
 
     def done(self):
-        # if the algo wasn't able to step in the last direction,
-        # that means it's done
-        try:
-            return self.direction_and_number_steps.values()[-1]==0
-        except:
-            return len(self.mat)==1
+        return self.num_bad_moves > 1
 
     def step(self):
         row, col = self.curr_pos
