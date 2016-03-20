@@ -1,6 +1,34 @@
 from direction import Direction, Right, Up
 
 def spiralize(size):
+    """
+    the idea:
+    this problem is made of a data structure and an algorithm
+    the data structure is a 2D matrix, one can also think of it as a board for games #noqa
+    the algorithm operates on the matrix, marking positions as visited as it goes    #noqa
+
+    Initially, I made a class for the 2D matrix, later decided it wasn't
+    necessary and in fact complicates things, for eg: it's easier to get the
+    matrix dimension, len(mat), if it's just a list of lists
+    - of course this could be accomplished through an instance variable as well
+    but at the end of the day I didn't feel a Matrix class would buy me much.
+
+    For this problem as well as other game-like algorithm problems
+    It seems to me a good idea to think about states.
+    The state of this game is captured by the
+    - matrix (each cell be either 0 or 1)
+    - current position, aka current cell
+    - direction
+    triple
+    so I think about current state, next possible state, other next possible state #noqa
+
+    For this game, after looking at the given test cases, I concluded given a
+    current position, the algorithm explores the next possible step, if that's
+    invalid, it could change direction and explore a different possible step,
+    and if that again is invalid then the algorithm should terminate. This is
+    because turning 90 degrees twice would mean going backward - not something
+    a spiral would do.
+    """
     mat = [[0]*size for i in range(size)]
     mat[0][0] = 1
     go_algo = Algo(mat, (0, 0), Right())
@@ -10,11 +38,9 @@ def spiralize(size):
 class Algo(object):
     def __init__(self, mat, curr_pos, direction):
         """
-
-        :param mat:
+        :param mat: matrix
         :param curr_pos:  a pair tuple
-        :param direction:
-        :return:
+        :param direction: where the spiral is headed
         """
         self.mat = mat
         self.curr_pos = curr_pos
