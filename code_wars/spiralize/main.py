@@ -1,17 +1,13 @@
-# from matrix import Matrix
 from direction import Direction, Right, Up
 
 def spiralize(size):
     mat = [[0]*size for i in range(size)]
     mat[0][0] = 1
-    # direction = 'r'
-    go_algo = Go(mat, (0,0), Right())
+    go_algo = Algo(mat, (0, 0), Right())
     go_algo.run()
-    # while not go_algo.done():
-    #     go_algo.keep_going_in_1_direction()
     return mat
 
-class Go(object):
+class Algo(object):
     def __init__(self, mat, curr_pos, direction):
         """
 
@@ -22,15 +18,11 @@ class Go(object):
         """
         self.mat = mat
         self.curr_pos = curr_pos
-        # self.hypothetical_pos = curr_pos
         self.direction = direction
-        self.direction_and_number_steps = {}
-        self.number_steps_in_direction = 0
 
     def run(self):
         """
         hp stands for hypothetical position
-        :return:
         """
         while True:
             hp = self.direction.step(self.curr_pos)
@@ -79,26 +71,12 @@ class Validate(object):
         print_list_of_lists(y)
         print '='*88
 
-def make_matrix(size):
-    return [[0]*size for i in range(size)]
-
 def print_list_of_lists(ll):
     print 'matrix:'
     for row in ll:
       print row
 
 if __name__ == '__main__':
-    # m2 = make_matrix(size=2)
-    # assert Go(m2, (0,0), Right()).done_with_direction() is False
-    # assert Go(m2, (0,1), Right()).done_with_direction() is True
-    # assert Go(m2, (0,0), Right()).out_of_bound()
-    #
-    # m3 = [[1,1,1],
-    #       [0,0,1],
-    #       [1,1,1]]
-    # assert Go(m3, (2,0), Up()).done_with_direction() is True
-    # assert Go(m2, (0,1), Up()).done_with_direction() is True
-
     Validate.assert_equals(spiralize(1), [[1]])
     print '='*88
     Validate.assert_equals(spiralize(2), [[1,1],
