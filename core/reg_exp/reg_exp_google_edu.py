@@ -7,10 +7,7 @@ import re
 
 str = 'an example word:ca_!!'
 match = re.search(r'word:\w\w\w', str)
-if match:
-    print 'found', match.group()    # match.group() is the matching text
-else:
-    print 'did not find'
+assert match.group() == 'word:ca_'   # match.group() is the matching text
 
 match = re.search(r'iii', 'piiig')
 assert match.group() == 'iii'
@@ -50,3 +47,9 @@ match = re.search(r'i+', 'foobar')
 assert match is None
 
 ##############################################################################
+
+match = re.search('a*b*', 'foobar')
+assert match.group() == ''
+
+match = re.search('oba', 'foobar')
+assert match.group() == 'oba'

@@ -1,4 +1,5 @@
 from itertools import permutations
+import time
 
 def my_generator(s):
     """
@@ -10,7 +11,6 @@ def my_generator(s):
 
 def listPosition(s):
     sorted_s = ''.join(sorted(s))
-    # print 'about to listPosition({0})'.format(sorted_s)
     gen = my_generator(sorted_s)
     set_values = set()
     c = 1
@@ -18,6 +18,16 @@ def listPosition(s):
         set_values.add(x)
         if x == s: return len(set_values)
         c+=1
+
+def print_unique_permutations(s):
+    sorted_s = ''.join(sorted(s))
+    gen = my_generator(sorted_s)
+    set_values = set()
+    for x in gen:
+        print x
+    #     set_values.add(x)
+    # for s in list(set_values):
+    #     print s
 
 class Validate(object):
   @staticmethod
@@ -28,24 +38,14 @@ class Validate(object):
         print 'expected value: {0}'.format(y)
 
 if __name__ == '__main__':
-    # testValues = {'A' : 1, 'AAAB' : 1}  # these 2 work
-    testValues = {'A' : 1, 'ABAB' : 2, 'AAAB' : 1, 'BAAA' : 4, 'QUESTION' : 24572, 'BOOKKEEPER' : 10743}
-    # testValues = {'ABAB' : 2}
+    # testValues = {'A' : 1, 'ABAB' : 2, 'AAAB' : 1, 'BAAA' : 4, 'QUESTION' : 24572, 'BOOKKEEPER' : 10743}
+    testValues = {'BOOKKEEPER' : 10743}
     for word in testValues:
-        Validate.assert_equals(listPosition(word), testValues[word], 'WRONG for: ' + word)
-    #     stop = 5
-    #     i = 0
-    #     for p in my_generator(word):
-    #         if i < stop:
-    #             print p
-    #         i+=1
+        start = time.time()
+        p = listPosition(word)
+        print 'that took {0}'.format(time.time()-start)
+        Validate.assert_equals(p, testValues[word], 'WRONG for: ' + word)
 
-    # ps = permutations('AABB')
-    # c = 0
-    # for p in ps:
-    #     c+=1
-    #     print ''.join(p)
-    # print 'count {0}'.format(c)
-
+    # print_unique_permutations('ABAB')
 
 

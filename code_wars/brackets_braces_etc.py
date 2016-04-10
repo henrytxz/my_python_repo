@@ -1,19 +1,18 @@
 def is_char_open_or_close(caps, char, stack_open_chars):
-    #print 'caps: {0}'.format(caps)
-    #print 'char: {0}'.format(char)
     index = caps.index(char)
-    #print 'index is {0}'.format(index)
-    #is_open_char = True
     is_open_char = True if (index%2==0) else False
-    #print is_open_char
 
-    # char is both an open and a close char, for eg - and -
-    if caps[index+1] == char and stack_open_chars[-1] == char:
+    # the above if else determines if a char is an open or close char
+    # unless if the char is both an open and a close char, for eg - and -
+    # we can tell by checking that caps has this char
+    # at index as well as at index+1
+    # in addition, it's already counted once as open so the 2nd time it should
+    # be counted as close
+    if index+1<len(caps) \
+            and caps[index+1] == char \
+            and len(stack_open_chars) > 0 and stack_open_chars[-1] == char:
         is_open_char = False    # the 2 conditions above make it a close char
     return is_open_char
-
-#def is_close_char(caps, char):
-#    return caps.index(char)%2==1
 
 def is_balanced(source, caps):
     stack_open_chars = []
@@ -24,8 +23,6 @@ def is_balanced(source, caps):
             else:
                 if len(stack_open_chars)==0: return False
                 open_char = stack_open_chars.pop()
-                #print caps.index(c)
-                #print caps.index(open_char)
                 if not (caps.index(c) == caps.index(open_char)+1):
                     if c != open_char:
                         return False
