@@ -40,7 +40,7 @@ class BL:
                 # if the byte at the data pointer is zero, then instead of moving
                 # the instruction pointer forward to the next command,
                 # jump it forward to the command after the matching ] command
-                end = self.find_closing_bracket()
+                end = BL.find_closing_bracket(self.code)
                 if end == -1:
                     raise Exception('[ failed to find a matching ]')
                 code_to_repeat = self.code[:end]
@@ -58,9 +58,33 @@ class BL:
                 raise Exception('unexpected instruction {0}'.format(op))
         return self.input, self.res, self.l
 
-    def find_closing_bracket(self):
-        return self.code.rfind(']')
+    @staticmethod
+    def find_closing_bracket(code):
+        return code.rfind(']')
+        # num_open_brackets = 1 # include the one just found
+        # next_open = code.find('[')
+        # next_close = code.find(']')
+        # if next_open == -1:
+        #     return next_close
+        # elif next_close < next_open:
+        #     return next_close
+        # else:
+        #     num_open_brackets += 1
 
+
+def find_all_char(a_string, a_char):
+    return [i for i in range(len(a_string)) if a_string[i]==a_char]
+
+def process_brackets(a_string):
+    d = {}
+    open_l  = find_all_char(a_string, '[')
+    close_l = find_all_char(a_string, ']')
+    for close in close_l:
+        open = max([open for open in open_l if open < close])
+        d[open] = close
+        open_l.remove(open)
+        # close_l.remove(close)     don't modify what you're iterating over
+    return d
 
 def brain_luck(code, input):
     bl = BL(code, input)
@@ -76,13 +100,21 @@ if __name__ == '__main__':
     # brain_luck('','')
     # Echo until byte(255) encountered
     # print brain_luck(',+[-.,+]', 'Codewars' + chr(255))
-    assert brain_luck(',+[-.,+]', 'Codewars' + chr(255)) == 'Codewars'
+    code0 = ',+[-.,+]'
+    # d0 = process_brackets(code0); assert len(d0)==1; assert d0[2]==7
+    assert brain_luck(code0, 'Codewars' + chr(255)) == 'Codewars'
 
     # # Echo until byte(0) encountered
     # print brain_luck(',[.[-],]', 'Codewars' + chr(0))
-    assert brain_luck(',[.[-],]', 'Codewars' + chr(0)) == 'Codewars'
+    code1 = ',[.[-],]'
+    d1 = process_brackets(code1); assert len(d1)==2;
+    assert d1[1]==7; assert d1[3]==5
+    assert brain_luck(code1, 'Codewars' + chr(0)) == 'Codewars'
 
     # # Two numbers multiplier
     # print brain_luck(',.', chr(8) + chr(9))
+    code2 = '[->+>+<<]>>[-<<+>>]'
+    d2 = process_brackets(code2); assert len(d2)==2;
+    assert d2[0]==8; assert d2[11]==18
     assert brain_luck(',>,<[>[->+>+<<]>>[-<<+>>]<<<-]>>.', chr(8) + chr(9)) == chr(72)  #noqa
 
