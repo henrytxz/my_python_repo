@@ -12,7 +12,8 @@ def lit(t):
     we denote a by s and abc by t
     the generator lit('a')(Ns) =
     """
-    return lambda Ns: set([t]) if (len(t) in Ns) else null
+    set_t = set([t])
+    return lambda Ns: set_t if len(t) in Ns else null
 
 def alt(x, y):
     return lambda Ns: x(Ns) | y(Ns)
@@ -21,13 +22,15 @@ def oneof(chars):
     """
     oneof(abc) => {a, b, c}, this requires 1 to be in Ns
     """
-    return lambda Ns: set(chars) if 1 in Ns else null
+    set_chars = set(chars)
+    return lambda Ns: set_chars if 1 in Ns else null
 
 null = frozenset([])
 
 def test():
     f = lit('hello')
     assert f(set([1, 2, 3, 4, 5])) == set(['hello'])
+    assert lit('hello')(set([1, 2, 3, 4, 5])) == set(['hello'])
     assert f(set([1, 2, 3, 4]))    == null
 
     g = alt(lit('hi'), lit('bye'))

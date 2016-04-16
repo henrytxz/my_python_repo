@@ -11,20 +11,39 @@ def lit(s):
     return lambda t : set([t[len(s):]]) if t and t.startswith(s) else null
 
 def star(x):
-    return lambda t: set([t]) | set([t2 for t1 in x(t) for t2 in star(x)(t1) if (t and t1!=t)])
+    return lambda t: set([t]) | set([t2 for t1 in x(t) for t2 in star(x)(t1)
+                                     if (t and t1!=t)])
+
+def starr(x):
+    """
+    another way of implementing the star pattern
+    """
+    def f(t):
+        s = set([t])
+        for t1 in x(t):
+            if t1!=t:
+                s = s.union(starr(x)(t1))
+        return s
+    return f
 
 def oneof(string):
-    # return lambda t: set().union(map(lit()))
+    """
+    I'm unclear about the specification for this one at the moment will leave
+    it out
+    """
     pass
 
 null = frozenset([])
 
 def test():
     assert star(lit('a'))('aabc') == set(['aabc', 'abc', 'bc'])
+    assert starr(lit('a'))('aabc') == set(['aabc', 'abc', 'bc'])
     assert match(lit('a'), 'aabc') == 'a'
     assert match(lit('a'), 'bc') == None
     assert match(star(lit('a')), 'aabc') == 'aa'
     assert match(star(lit('a')), 'aaaaabbbaa') == 'aaaaa'
+    assert match(starr(lit('a')), 'aabc') == 'aa'
+    assert match(starr(lit('a')), 'aaaaabbbaa') == 'aaaaa'
     assert match(lit('hello'), 'hello how are you?') == 'hello'
     assert match(lit('x'), 'hello how are you?') == None
     # assert match(oneof('xyz'), 'x**2 + y**2 = r**2') == 'x'
