@@ -18,12 +18,10 @@ def alt(x, y):
     return lambda Ns: x(Ns) | y(Ns)
 
 def oneof(chars):
-    def f(Ns):
-        res = set()
-        for char in chars:
-            res = res.union(lit(char)(Ns))
-        return res
-    return f
+    """
+    oneof(abc) => {a, b, c}, this requires 1 to be in Ns
+    """
+    return lambda Ns: set(chars) if 1 in Ns else null
 
 null = frozenset([])
 
