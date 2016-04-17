@@ -58,7 +58,28 @@ def matchset(pattern, text):
 null = frozenset()
 
 def lit(string):  return ('lit', string)
-def seq(x, y):    return ('seq', x, y)
+# def seq(x, y):  return ('seq', x, y)
+def seq(x, *args):
+    if len(args)==1:
+        return ('seq', x, args[0])
+    elif len(args)==0:
+        return lit(x)
+    else:
+        return seq(x, seq(args[0], *args[1:]))
+        #   seq('lit('a')', 'lit('b')', 'lit('c')')
+        #           args = ('lit('b')', 'lit('c')')
+        #           args[1] = 'lit('c')'
+        #           args[1:] = (('lit('c')',))
+        #           args =     (('lit('c')',))
+        #           len(args) is 1
+        #   op, x, y = 'seq', (('lit('c')',)), ''
+        #   but
+
+        # suppose we have
+        # seq('lit('a')', 'lit('b')', 'lit('c')', 'lit('d')')
+        # args = (.., 'lit('d')')
+        # args[1:] = (('lit('c')', 'lit('d')')
+
 def alt(x, y):    return ('alt', x, y)
 def star(x):      return ('star', x)
 def plus(x):      return seq(x, star(x))
@@ -67,7 +88,10 @@ def oneof(chars): return ('oneof', tuple(chars))
 dot = ('dot',)
 eol = ('eol',)
 
-def test():
+def run():
+    # matchset(abc, abcde) should return set(['de'])
+    assert match(seq(lit('a'),lit('b'),lit('c')), 'abcde') == 'abc'
+    assert match(seq(lit('a'),lit('b')), 'abcde') == 'ab'
     assert matchset(('oneof', 'ab'), 'aabc123') == set(['abc123'])
     assert match(('oneof', 'ab'), 'aabc123') == 'a'
     assert match(('star', ('lit', 'a')),'aaabcd') == 'aaa'
@@ -76,4 +100,4 @@ def test():
     assert search(('alt', ('lit', 'b'), ('lit', 'c')), 'ab') == 'b'
     return 'tests pass'
 
-print test()
+print run()
