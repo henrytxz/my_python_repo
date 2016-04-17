@@ -58,15 +58,27 @@ def matchset(pattern, text):
 null = frozenset()
 
 def lit(string):  return ('lit', string)
-# def seq(x, y):  return ('seq', x, y)
-def seq(x, *args):
-    if len(args)==1:
-        return ('seq', x, args[0])
-    elif len(args)==0:
-        return lit(x)
-    else:
-        return seq(x, seq(args[0], *args[1:]))
-        # Note: it's important to have the * here because I want to pass in len(list)!!! arguments, not list as 1 argument
+
+# def seq(x, *args):
+#     if len(args)==1:
+#         return ('seq', x, args[0])
+#     elif len(args)==0:
+#         return x
+#     else:
+#         return seq(x, seq(args[0], *args[1:]))
+#         # Note: it's important to have the * here because I want to pass in len(list)!!! arguments, not list as 1 argument
+
+def seq(x, y): return ('seq', x, y)
+
+# def n_ary(bin_f):
+#     def f(*args):
+#         if len(args)==1:
+#             return args[0]
+#         elif len(args)==2:
+#             return bin_f(*args)
+#         else:
+#             return bin_f(args[0], f(*args[1:]))
+#     return f
 
 def alt(x, y):    return ('alt', x, y)
 def star(x):      return ('star', x)
@@ -76,10 +88,33 @@ def oneof(chars): return ('oneof', tuple(chars))
 dot = ('dot',)
 eol = ('eol',)
 
+def n_ary(bin_f):
+    """Given binary function f(x, y), return an n_ary function such
+    that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x.
+    Why it works, unpacks 1 pattern from *args at a time then recurse
+    the base case is when len(args) is 0, return x
+    """
+    def n_ary_f(x, *args):
+        return x if len(args)==0 else bin_f(x, n_ary_f(*args))
+    return n_ary_f
+
 def run():
     # matchset(abc, abcde) should return set(['de'])
-    assert match(seq(lit('a'),lit('b'),lit('c')), 'abcde') == 'abc'
     assert match(seq(lit('a'),lit('b')), 'abcde') == 'ab'
+    assert n_ary(seq)(lit('a')) == ('lit', 'a')
+    assert match(n_ary(seq)(lit('a')), 'abcde') == 'a'
+    assert match(n_ary(seq)(lit('a'),lit('b')), 'abcde') == 'ab'
+    """
+    flow:
+    n_ary_seq(lit('a'),lit('b'))
+    n_ary_seq(lit('a'), n_ary_seq(lit('b'))) because len(args) is 1 and not 0
+    n_ary_seq(lit('a'), lit('b')) because n_ary_seq(lit('b')) len(args) is 0, x is lit('b')
+    seq(lit('a'), lit('b')) because when len(args) is 0, n_ary_seq(x, *args) returns x
+    seq(lit('a'), lit('b'))(text) returns 'ab' if text.startswith('ab') else None
+    """
+    assert match(n_ary(seq)(lit('a'),lit('b')), '9834') == None # yes indeedy!
+    assert match(n_ary(seq)(lit('a'),lit('b'),lit('c')), 'abcde') == 'abc'
+
     assert matchset(('oneof', 'ab'), 'aabc123') == set(['abc123'])
     assert match(('oneof', 'ab'), 'aabc123') == 'a'
     assert match(('star', ('lit', 'a')),'aaabcd') == 'aaa'
