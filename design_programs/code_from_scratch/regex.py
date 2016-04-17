@@ -1,3 +1,5 @@
+import string
+
 def match(pattern, string):
     """
     returns the longest substring of string that fits the pattern
@@ -33,9 +35,45 @@ def oneof(string):
     """
     pass
 
+def digit():
+    """
+    a pattern is supposed to return a set of remainders => this is not a pattern just yet
+    """
+    # return lambda t: (t[0] in word_chars) if t else False
+    return lambda t: set([t[1:]]) if t and t[0] in word_chars else null
+
+def wspace():
+    """
+    a pattern is supposed to return a set of remainders => this is not a pattern just yet
+    """
+    return lambda t: set([t[1:]]) if (t and t[0] in white_spaces) else null
+
+def seq(x, y):
+    return lambda t: set([t2 for t1 in x(t) for t2 in y(t1)])
+
+white_spaces = set([' ','\t'])
+word_chars = set(string.digits) | set(string.ascii_letters) | set(['_'])
 null = frozenset([])
 
+
 def test():
+    assert digit()('8') == set([''])
+    assert digit()('_') == set([''])
+    assert digit()('B') == set([''])
+
+    assert seq(lit('5'), lit('6'))('5678') == set(['78'])
+    assert seq(lit('5'), star(lit('6')))('566678') == \
+           set(['78', '678', '6678', '66678'])
+
+    # from regex import digit, wspace, star
+    assert wspace()('  385') == set([' 385'])
+    assert star(wspace())('  385') == set(['  385', ' 385', '385'])
+    assert match(seq(seq(digit(), star(wspace())), digit()), '3  jilw') == '3  j'
+
+    # re.match('1(x|y)'
+    # match = re.search(r'\d\s*\d', 'xx1 2   3xx') would use seq
+    #                     seq(seq(digit(), star(wspace()), digit())
+
     assert star(lit('a'))('aabc') == set(['aabc', 'abc', 'bc'])
     assert starr(lit('a'))('aabc') == set(['aabc', 'abc', 'bc'])
     assert match(lit('a'), 'aabc') == 'a'
