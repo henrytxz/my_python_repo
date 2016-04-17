@@ -66,19 +66,7 @@ def seq(x, *args):
         return lit(x)
     else:
         return seq(x, seq(args[0], *args[1:]))
-        #   seq('lit('a')', 'lit('b')', 'lit('c')')
-        #           args = ('lit('b')', 'lit('c')')
-        #           args[1] = 'lit('c')'
-        #           args[1:] = (('lit('c')',))
-        #           args =     (('lit('c')',))
-        #           len(args) is 1
-        #   op, x, y = 'seq', (('lit('c')',)), ''
-        #   but
-
-        # suppose we have
-        # seq('lit('a')', 'lit('b')', 'lit('c')', 'lit('d')')
-        # args = (.., 'lit('d')')
-        # args[1:] = (('lit('c')', 'lit('d')')
+        # Note: it's important to have the * here because I want to pass in len(list)!!! arguments, not list as 1 argument
 
 def alt(x, y):    return ('alt', x, y)
 def star(x):      return ('star', x)
