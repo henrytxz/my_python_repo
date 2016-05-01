@@ -52,11 +52,12 @@ def inverse(f, delta = 1/128.):
             print 'r {0}'.format(r)
             print 'y-f(l): {0}'.format(y-f(l))
             print 'f(r)-y: {0}'.format(f(r)-y)
-            if f(r/2)-y<0:
-                l = (l+r)/2
+            mid = (l+r)/2
+            if f(mid)-y<0:
+                l = mid
                 # print 'changing l to {0}'.format(l)
             else:
-                r = (l+r)/2
+                r = mid
                 # print 'changing r to {0}'.format(r)
         print 'y-f(l): {0}'.format(y-f(l))
         print 'f(r)-y: {0}'.format(f(r)-y)
@@ -73,7 +74,7 @@ import time
 start = time.time()
 # print 'sqrt {0}'.format(sqrt(100))
 print pow(10,-6)
-print 'sqrt {0}'.format(sqrt(1e6))
+print 'sqrt {0}'.format(sqrt(1e10))
 # print 'sqrt {0}'.format(sqrt(10000000000))
 # print sqrt(10000000000)
 stop = time.time()
