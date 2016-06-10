@@ -10,3 +10,6 @@ assert g.next()==0
 assert g.next()==1
 assert g.next()==2
 
+g = (i for i in xrange(10))
+for i in g:
+    print i

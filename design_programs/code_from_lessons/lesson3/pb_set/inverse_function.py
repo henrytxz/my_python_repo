@@ -44,23 +44,12 @@ def inverse(f, delta = 1/128.):
         r=100.0
         while f(r) < y:
             r = r*2
-            print f(r)
-        print 'find good r {0}'.format(r)
         while min(y-f(l), f(r)-y)>pow(10,-6):
-            print 'y {0}'.format(y)
-            print 'l {0}'.format(l)
-            print 'r {0}'.format(r)
-            print 'y-f(l): {0}'.format(y-f(l))
-            print 'f(r)-y: {0}'.format(f(r)-y)
             mid = (l+r)/2
             if f(mid)-y<0:
                 l = mid
-                # print 'changing l to {0}'.format(l)
             else:
                 r = mid
-                # print 'changing r to {0}'.format(r)
-        print 'y-f(l): {0}'.format(y-f(l))
-        print 'f(r)-y: {0}'.format(f(r)-y)
         if (y-f(l)) < (f(r)-y):
             return l
         else:
@@ -72,10 +61,7 @@ sqrt = inverse(square)
 
 import time
 start = time.time()
-# print 'sqrt {0}'.format(sqrt(100))
-print pow(10,-6)
 print 'sqrt {0}'.format(sqrt(1e10))
-# print 'sqrt {0}'.format(sqrt(10000000000))
-# print sqrt(10000000000)
 stop = time.time()
 print 'took {0}'.format(stop-start)
+
