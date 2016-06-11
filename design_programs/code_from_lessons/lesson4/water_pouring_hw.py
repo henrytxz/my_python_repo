@@ -17,8 +17,6 @@
 # ('empty', i), ('pour', i, j) where i and j are indices indicating the
 # glass number.
 
-# import copy
-
 
 def more_pour_problem(capacities, goal, start=None):
     """The first argument is a tuple of capacities (numbers) of glasses; the
@@ -30,8 +28,6 @@ def more_pour_problem(capacities, goal, start=None):
     action is one of ('fill', i), ('empty', i), ('pour', i, j), where
     i and j are indices indicating the glass number."""
     # your code here
-
-    # is_goal = lambda state: (for curr_level in state: if curr_level == goal: True; else: False)
 
     def done(state):
         for curr_level in state:
@@ -49,12 +45,10 @@ def more_pour_problem(capacities, goal, start=None):
         for i in range(number_glasses):
             fill_i = list(state)
             fill_i[i] = capacities[i]
-            # nexts[('fill', i)] = fill_i
             nexts[tuple(fill_i)] = ('fill', i)
 
             empty_i = list(state)
             empty_i[i] = 0
-            # nexts[('empty', i)] = empty_i
             nexts[tuple(empty_i)] = ('empty', i)
 
             for j in range(number_glasses):
@@ -63,21 +57,13 @@ def more_pour_problem(capacities, goal, start=None):
                 pour_i_to_j = list(state)
                 pour_i_to_j[i] -= amt_transferred
                 pour_i_to_j[j] += amt_transferred
-                # next[('pour', i, j)] = pour_i_to_j
                 nexts[tuple(pour_i_to_j)] = ('pour', i, j)
 
         return nexts
 
-    start = start if start else [0]*number_glasses
+    start = start if start else (0,)*number_glasses
     result = shortest_path_search(start, successors=successors, is_goal=done)
-    if result and isinstance(result[0], list):
-        result[0] = tuple(result[0])
     return result
-
-    # frontier = []
-    # while frontier:
-    #     pass
-    # return Fail
 
 def shortest_path_search(start, successors, is_goal):
     """Find the shortest path from start state to a state
