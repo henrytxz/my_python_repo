@@ -35,9 +35,9 @@ def subway(**lines):
         stations = stations.split(' ')
         number_stations = len(stations)
         for i in range(number_stations-1):
-            d.setdefault(stations[i], {}).setdefault(stations[i+1], set()).add((line, 'r'))
+            d.setdefault(stations[i], {}).setdefault(stations[i+1], line)
         for i in range(number_stations-1, 0, -1):
-            d.setdefault(stations[i], {}).setdefault(stations[i-1], set()).add((line, 'l'))
+            d.setdefault(stations[i], {}).setdefault(stations[i-1], line)
     return d
 
 boston = subway(
@@ -49,7 +49,6 @@ boston = subway(
 def ride(here, there, system=boston):
     "Return a path on the subway system from here to there."
     ## your code here
-    # system = subway(**system)
     def done(state):
         return state == there
     def successors(state):
@@ -60,6 +59,14 @@ def longest_ride(system):
     """"Return the longest possible 'shortest path'
     ride between any two stops in the system."""
     ## your code here
+    longest = []
+    for station in system:
+        for another_station in system:
+            if station != another_station:
+                path = ride(station, another_station, system)
+                if len(path) > len(longest):
+                    longest = path
+    return longest
 
 def shortest_path_search(start, successors, is_goal):
     """Find the shortest path from start state to a state
@@ -90,12 +97,6 @@ def path_actions(path):
     return path[1::2]
 
 def test_ride():
-    test_system = subway(
-        green='s0 s1',
-        red='s1 s0'
-    )
-    assert test_system['s0']['s1'] == {('green', 'r'), ('red','l')}
-    print ride('mit', 'government')
     assert ride('mit', 'government') == [
         'mit', 'red', 'charles', 'red', 'park', 'green', 'government']
     assert ride('mattapan', 'foresthills') == [
