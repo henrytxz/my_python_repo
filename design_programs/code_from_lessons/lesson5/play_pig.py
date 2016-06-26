@@ -64,20 +64,12 @@ def always_hold(state):
     return 'hold'
 
 def test():
-    # outcomes = []
-    # for i in range(60000):
-    #     outcomes.append(roll_a_die())
-    # for i in range(1,7):
-    #     print '{0} appears {1} times'.format(i, outcomes.count(i))
-
-    # for i in range(10):
-    #     play_pig(always_hold, always_roll)
-
     for _ in range(10):
         winner = play_pig(always_hold, always_roll)
         assert winner.__name__ == 'always_roll'
     return 'tests pass'
 
-print test()
+if __name__ == '__main__':
+    print test()
 
 
