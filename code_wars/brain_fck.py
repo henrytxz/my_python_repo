@@ -27,20 +27,28 @@ class BL:
                 self.i-=1
             elif op == '+':
                 # increment (increase by one) the byte at the data pointer.
+                try:
+                    new_val = add_diff_to_char(self.l[self.i], 1)
+                except IndexError:
+                    new_val = chr(1)
                 if self.i == len(self.l):
-                    self.l.append(add_diff_to_char(self.l[self.i], 1))
+                    self.l.append(new_val)
                 elif self.i == -1:
-                    self.l.insert(0, add_diff_to_char(self.l[self.i], 1))
+                    self.l.insert(0, new_val)
                 else:
-                    self.l[self.i] = add_diff_to_char(self.l[self.i], 1)
+                    self.l[self.i] = new_val
             elif op == '-':
                 # decrement (decrease by one) the byte at the data pointer.
+                try:
+                    new_val = add_diff_to_char(self.l[self.i], 1)
+                except IndexError:
+                    new_val = chr(255)
                 if self.i == len(self.l):
-                    self.l.append(add_diff_to_char(self.l[self.i], -1))
+                    self.l.append(new_val)
                 elif self.i == -1:
-                    self.l.insert(0, add_diff_to_char(self.l[self.i], -1))
+                    self.l.insert(0, new_val)
                 else:
-                    self.l[self.i] = add_diff_to_char(self.l[self.i], -1)
+                    self.l[self.i] = new_val
             elif op == '.':
                 # output the byte at the data pointer.
                 self.res.append(self.l[self.i])
@@ -92,31 +100,32 @@ def brain_luck(code, input):
 # def brain_luck_recurse(code, input, l, i, res):
 
 if __name__ == '__main__':
-    # assert add_diff_to_char('C',  1) == 'D'
-    # assert add_diff_to_char('C', -1) == 'B'
-    #
-    # # Echo until byte(255) encountered
-    # code0 = ',+[-.,+]'
-    # # d0 = process_brackets(code0); assert len(d0)==1; assert d0[2]==7
-    # assert brain_luck(code0, 'Codewars' + chr(255)) == 'Codewars'
-    # #
-    # # # # Echo until byte(0) encountered
-    # code1 = ',[.[-],]'
-    # # d1 = process_brackets(code1); assert len(d1)==2;
-    # # assert d1[1]==7; assert d1[3]==5
-    # assert brain_luck(code1, 'Codewars' + chr(0)) == 'Codewars'
-    # #
-    # # # Two numbers multiplier
-    # # # print brain_luck(',.', chr(8) + chr(9))
-    # # code2 = '[->+>+<<]>>[-<<+>>]'
-    # # d2 = process_brackets(code2); assert len(d2)==2;
-    # # assert d2[0]==8; assert d2[11]==18
-    #
-    # assert brain_luck(',>,<[>[->+>+<<]>>[-<<+>>]<<<-]>>.', chr(8) + chr(9)) == chr(72)  #noqa
+    if False:
+        # assert add_diff_to_char('C',  1) == 'D'
+        # assert add_diff_to_char('C', -1) == 'B'
+        #
+        # # Echo until byte(255) encountered
+        code0 = ',+[-.,+]'
+        # # d0 = process_brackets(code0); assert len(d0)==1; assert d0[2]==7
+        assert brain_luck(code0, 'Codewars' + chr(255)) == 'Codewars'
+        # #
+        # # # # Echo until byte(0) encountered
+        code1 = ',[.[-],]'
+        # # d1 = process_brackets(code1); assert len(d1)==2;
+        # # assert d1[1]==7; assert d1[3]==5
+        assert brain_luck(code1, 'Codewars' + chr(0)) == 'Codewars'
+        # #
+        # # # Two numbers multiplier
+        # # # print brain_luck(',.', chr(8) + chr(9))
+        # # code2 = '[->+>+<<]>>[-<<+>>]'
+        # # d2 = process_brackets(code2); assert len(d2)==2;
+        # # assert d2[0]==8; assert d2[11]==18
+        #
+        assert brain_luck(',>,<[>[->+>+<<]>>[-<<+>>]<<<-]>>.', chr(8) + chr(9)) == chr(72)  #noqa
 
-    x = chr(0)
-    for i in range(72):
-        x = add_diff_to_char(x, 1)
-    print x
+        x = chr(0)
+        for i in range(72):
+            x = add_diff_to_char(x, 1)
+        print x
 
     print brain_luck('++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.', '')

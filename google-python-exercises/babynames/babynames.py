@@ -46,31 +46,25 @@ def extract_names(filename):
   file_content = file.read()
   year = re.search(r'Popularity in (\d\d\d\d)', file_content).group(1)
   list = []
-  list.append(year)
+  list.append('Popularity in '+str(year))
   rows_of_names = re.findall(r'(\d+)</td><td>(\w*)</td><td>(\w*)', file_content)
-  print rows_of_names
+  # print rows_of_names
 
   male_names = {}
   female_names = {}
 
   for row in rows_of_names:
-      rank = row[0]
-      name1 = row[1]
-      name2 = row[2]
+      rank, name1, name2 = row
       male_names[name1] = rank
       female_names[name2] = rank
 
-  all_names = sorted(male_names.items().extend(female_names.items()))
-  list.append(all_names)
-
-  print sorted(male_names.items())
-  print sorted(female_names.items())
-  male_ordered_dict = OrderedDict()
-  female_ordered_dict = OrderedDict()
-
-  # print ordered_dict
-  dict()
-  # list.extend(rows_of_names)
+  # print sorted(male_names.items())
+  # print sorted(female_names.items())
+  all_names = male_names.items()
+  all_names.extend(female_names.items())
+  all_names = sorted(all_names)
+  for name, rank in all_names:
+    list.append(name+' '+rank)
   return list
 
 
@@ -93,7 +87,14 @@ def main():
   # +++your code here+++
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
-  print extract_names(args[0])
-  
+  for arg in args:
+    list = extract_names(arg)
+    if summary:
+      summary_file = open(arg+'.summary', 'w')
+      summary_file.write('\n'.join(list))
+    else:
+      print '\n'.join(list)
+      print '='*88
+
 if __name__ == '__main__':
   main()
