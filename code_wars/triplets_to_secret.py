@@ -1,19 +1,21 @@
-def recoverSecret(triplets):
-    G = {'e':{},
-         'g':set('en'),
-         'l':set('eg'),
-         'n':{'e'},
-         'a':set('engl')}
-    nodes = ['e','g','l','n','a']
-    return build_str(G, nodes)
+from collections import defaultdict
 
-def find_sink(G, curr, fs):
-    precedents = G[curr]
-    for p in precedents:
-        if p in fs:
-            continue
-        return find_sink(G, p, fs)
-    return curr
+def recoverSecret(triplets):
+    G, nodes = build_graph(triplets)
+    return build_str(G, list(nodes))
+
+def build_graph(triplets):
+    G = defaultdict(set)
+    nodes = set()
+    for triplet in triplets:
+        a,b,c = triplet
+        G[b].add(a)
+        G[c].add(a)
+        G[c].add(b)
+        nodes.add(a)
+        nodes.add(b)
+        nodes.add(c)
+    return G, nodes
 
 def build_str(G, nodes):
     fs = []
@@ -25,6 +27,15 @@ def build_str(G, nodes):
         fs.append(s)
         nodes.remove(s)
 
+def find_sink(G, curr, fs):
+    precedents = G[curr]
+    for p in precedents:
+        if p in fs:
+            continue
+        return find_sink(G, p, fs)
+    return curr
+
+
 if __name__ == '__main__':
     triplets = [
       ['e','g','l'],
@@ -32,5 +43,5 @@ if __name__ == '__main__':
       ['n','g','a'],
       ['e','l','a']
     ]
-
-    print recoverSecret(triplets)
+    # print build_graph(triplets)
+    assert recoverSecret(triplets) == 'engla'

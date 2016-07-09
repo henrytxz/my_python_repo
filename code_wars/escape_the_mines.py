@@ -16,6 +16,7 @@ class Matrix:
   def __init__(self, mat):
     """
     :return: a dictionary, each key is a node, its value a set of (direction, node) pairs
+    todo: remove hard-coding
     """
     self.m = {}
     self.m[(0,0)] = set()
@@ -30,11 +31,6 @@ class Matrix:
 
   def __getitem__(self, tuple_representation_of_position):
     return self.m[tuple_representation_of_position]
-
-  # class Neighbor:
-  #   def __init__(self, mat, ):
-
-# def build_graph(mat):
 
 def data_translation(dict_representation_of_position):
   tuple_representation_of_position = (dict_representation_of_position['x'],
@@ -62,8 +58,12 @@ def dfs(graph, current_node, exit):
       list_of_directions.insert(0, direction)
       return list_of_directions
 
+
+############################### tests ########################################
+
 """
-Escape(2 by 2,  0,0,  1,1): dfs(origin, exit), mark origin, say we go to (0,1) - 2nd row 1st column, it's not the exit, check,
+Escape(2 by 2,  0,0,  1,1): dfs(origin, exit), mark origin, say we go to (0,1)
+- 2nd row 1st column, it's not the exit, check...
 """
 
 def describe(message):
@@ -72,14 +72,20 @@ def describe(message):
 def it(message):
   print message
 
-describe('A trivial map (1x1)')
-minemap = [[True]]
-it('Should return an empty array, since we\'re already at the goal')
-assert solve(minemap, {'x':0,'y':0}, {'x':0,'y':0}) == []
+# describe('A trivial map (1x1)')
+# minemap = [[True]]
+# it('Should return an empty array, since we\'re already at the goal')
+# assert solve(minemap, {'x':0,'y':0}, {'x':0,'y':0}) == []
+#
+# minemap = [[True, False], [True, True]]
+# it('Should return the only correct move')
+# assert solve(minemap, {'x':0,'y':0}, {'x':1,'y':0}) == ['right']
+#
+# it('Should return the only moves necessary')
+# assert solve(minemap, {'x':0,'y':0}, {'x':1,'y':1}) == ['right', 'down']
 
-minemap = [[True, False], [True, True]]
-it('Should return the only correct move')
-assert solve(minemap, {'x':0,'y':0}, {'x':1,'y':0}) == ['right']
-
-it('Should return the only moves necessary')
-assert solve(minemap, {'x':0,'y':0}, {'x':1,'y':1}) == ['right', 'down']
+describe('A linear map(1x4)')
+minemap = [[True], [True], [True], [True]]
+it('Should return a chain of moves to the right')
+assert solve(minemap, {'x':0,'y':0}, {'x':3,'y':0}) == \
+       ['right', 'right', 'right']
