@@ -43,10 +43,10 @@ if True:
     a = pd.Series([1, 2, 3, 4])
     b = pd.Series([1, 2, 1, 2])
 
-    print a + b
-    print a * 2
-    print a >= 3
-    print a[a >= 3]
+    # print a + b
+    # print a * 2
+    # print a >= 3
+    # print a[a >= 3]   WOW
 
 def get_num_same_direction(series0, series1):
     mean0 = series0.mean()
