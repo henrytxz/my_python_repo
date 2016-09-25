@@ -1,6 +1,8 @@
+# in Java this would not compile but in Python it would
+
 if True:
     x = 3
-assert x == 3   # in Java this would not compile but in Python it would
+assert x == 3
 
 # for example
 # public class HelloWorld{
