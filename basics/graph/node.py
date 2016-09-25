@@ -1,6 +1,6 @@
 class Node:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, key):
+        self.key = key
         self.adj = []
 
     def add_adj(self, neighbors):
@@ -10,7 +10,7 @@ class Node:
         return self.adj
 
     def __str__(self):
-        return self.name
+        return self.key
 
 if __name__ == '__main__':
     [a,b,c,d,e] = [Node(x) for x in 'abcde']
