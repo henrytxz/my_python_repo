@@ -8,10 +8,9 @@ a,b,d is a subseq of a,b,c,d,e,f
 from core.decorators.timer import timed_call
 
 class Subseqs(object):
-    @timed_call
+    # @timed_call
     def subseqs(self):
         resulting_list = self.__subseqs()
-        # self.cache[(self.S, 0)] = resulting_list
         return [x for x in resulting_list if x]
 
     def __subseqs(self, beg=0):
@@ -25,7 +24,6 @@ class Subseqs(object):
             return ['']
 
         resulting_list = []
-        # self.cache[(self.S, beg+1)] = self.__subseqs(beg+1)
         solution_to_problem_size_n_minus_1 = self.__subseqs(beg+1)
 
         # the following line same effect as
@@ -36,7 +34,6 @@ class Subseqs(object):
         return resulting_list
 
     def __call__(self, full_string):
-        # self.cache = {}
         self.S = full_string
         self.first_invalid_index = len(self.S)
         return self.subseqs()
