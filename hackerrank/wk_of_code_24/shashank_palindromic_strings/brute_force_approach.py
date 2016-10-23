@@ -59,14 +59,14 @@ def tests():
     string = 'ab'
     assert string[1:-1] == ''
 
-    # assert count_palindromes(['ab', 'ab']) == 4     # aa, bb, aba, bab => 4
+    assert count_palindromes(['ab', 'ab']) == 4     # aa, bb, aba, bab => 4
     assert count_palindromes(['aa', 'b', 'aa']) == 5
-    # assert count_palindromes(['a', 'b', 'c']) == 0
-    # assert count_palindromes(['abc', 'abc']) == 9
+    assert count_palindromes(['a', 'b', 'c']) == 0
+    assert count_palindromes(['abc', 'abc']) == 9
     # performance_test()
 
 
 if __name__ == '__main__':
-    # tests()
+    tests()
     # cProfile.run('performance_test()')
-    performance_test()
+    # performance_test()
