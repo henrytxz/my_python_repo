@@ -1,49 +1,81 @@
 """
 Given a list_of_ints, find the highest_product you can get from three of the
 integers.
-"""
-from unittest import TestCase
-from heap import FixedSizeMinHeap, FixedSizeMaxHeap
 
+We want to keep track of 2 smallest numbers
+if they are both -ve, their product can be largest than the 2nd and 3rd largest
++ve numbers' product
+"""
+import unittest
+from unittest import TestCase
+
+def max_with_None(*args):
+    return max([x for x in args if x is not None])
+
+def min_with_None(*args):
+    return min([x for x in args if x is not None])
+
+assert max_with_None(1,2,None,-5) == 2
+
+class Products(object):
+    """
+    sp stands for smallest product
+    lp stands for largest product
+    i denotes the product is the product of i ints
+    """
+    def __init__(self, sp=None, lp=None):
+        self.sp = sp
+        self.lp = lp
+
+    def set_lp(self, x, product_i_minus_1):
+        done = self.lp is None
+        if product_i_minus_1 is None:
+            self.lp = max_with_None(self.lp, x)
+        else:
+            self.lp = max_with_None(self.lp, x * product_i_minus_1.sp,
+                                    x * product_i_minus_1.lp)
+        return done
+
+    def set_sp(self, x, product_i_minus_1):
+        if product_i_minus_1 is None:
+            self.sp = min_with_None(self.sp, x)
+        else:
+            self.sp = min_with_None(self.sp, x * product_i_minus_1.sp,
+                                    x * product_i_minus_1.lp)
+
+from copy import deepcopy
+
+def largest_product_of_k_ints(A, k):
+    products = [Products() for _ in range(k)]
+    for x in A:
+        curr_products = deepcopy(products)
+        for i in range(k):
+            if i == 0:
+                product_i_minus_1 = None
+            else:
+                product_i_minus_1 = curr_products[i-1]
+            if i != k-1:
+                products[i].set_sp(x, product_i_minus_1)
+            done = products[i].set_lp(x, product_i_minus_1)
+            if done:
+                break
+    return products[-1].lp
 
 def highest_product(A):
-    three_largest = FixedSizeMinHeap(3)
-    two_smallest = FixedSizeMaxHeap(2)
-    # has_zero = False
-    neg_numbers = 0
-    pos_numbers = 0
-    for x in A:
-        three_largest.push(x)
-        two_smallest.push(x)
-        if x < 0:
-            neg_numbers += 1
-        elif x == 0:
-            has_zero = True
-        else:
-            pos_numbers += 1
+    return largest_product_of_k_ints(A, 3)
 
-    # if pos_numbers >= 3:
-    third_largest = three_largest.pop()
-    second_largest = three_largest.pop()
-    largest = three_largest.pop()
-    return max(two_smallest.pop()*two_smallest.pop()*largest,
-                 third_largest*second_largest*largest)
-    # elif pos_numbers == 2:
-    #     if has_zero:
-    #         if neg_numbers < 2:
-    #             return 0
-    #         else:
-    #             return max(two_smallest.pop()*two_smallest.pop(),
-    #                        third_largest*second_largest) * largest
-    #     else:
 
 class TestHighestProduct(TestCase):
     def test_at_least_3_positive_numbers(self):
         # less than 2 -ve number
         assert highest_product([-8, 1, 2, 3, 4, 5]) == 3 * 4 * 5
-        # at least 2 -ve numbers
+
+        # 2 -ve numbers
         assert highest_product([-8, -7, 1, 2, 3, 4, 5]) == (-8) * (-7) * 5
         # either the 3 largest => product or the largest * two most -ve
+
+        # 2 - ve numbers + an 0
+        assert highest_product([-10, 4, 8, 0, 12, -5]) == (-10)*12*(-5)
 
     def test_2_positive_numbers(self):
         # less than 2 -ve number
@@ -70,7 +102,5 @@ class TestHighestProduct(TestCase):
         # has 0 => 0
         assert highest_product([-1, -2, -3, -4, 0]) == 0
 
-"""
-let's summarize:
-I want to keep track of 2 smallest numbers (if they are both -ve, can be useful)
-"""
+if __name__ == '__main__':
+    unittest.main()
