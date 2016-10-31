@@ -27,38 +27,46 @@ class Products(object):
         self.sp = sp
         self.lp = lp
 
-    def set_lp(self, x, product_i_minus_1):
-        done = self.lp is None
-        if product_i_minus_1 is None:
+    def set_lp(self, x, product_of_1_fewer_int=None):
+        if product_of_1_fewer_int is None:
             self.lp = max_with_None(self.lp, x)
         else:
-            self.lp = max_with_None(self.lp, x * product_i_minus_1.sp,
-                                    x * product_i_minus_1.lp)
-        return done
+            self.lp = max_with_None(self.lp, x * product_of_1_fewer_int.sp,
+                                    x * product_of_1_fewer_int.lp)
 
-    def set_sp(self, x, product_i_minus_1):
-        if product_i_minus_1 is None:
+    def set_sp(self, x, product_of_1_fewer_int=None):
+        if product_of_1_fewer_int is None:
             self.sp = min_with_None(self.sp, x)
         else:
-            self.sp = min_with_None(self.sp, x * product_i_minus_1.sp,
-                                    x * product_i_minus_1.lp)
+            self.sp = min_with_None(self.sp, x * product_of_1_fewer_int.sp,
+                                    x * product_of_1_fewer_int.lp)
 
-from copy import deepcopy
+def init_products(A, k):
+    products = []
+    first_i_prods = 1
+    for i in range(k):
+        first_i_prods *= A[i]
+        products.append(Products(first_i_prods, first_i_prods))
+    return products
+
+def get_product_of_1_fewer_int(products, num_ints):
+    if num_ints == 0:
+        product_num_ints_minus_1 = None
+    else:
+        product_num_ints_minus_1 = products[num_ints - 1]
+    return product_num_ints_minus_1
 
 def largest_product_of_k_ints(A, k):
-    products = [Products() for _ in range(k)]
-    for x in A:
-        curr_products = deepcopy(products)
-        for i in range(k):
-            if i == 0:
-                product_i_minus_1 = None
-            else:
-                product_i_minus_1 = curr_products[i-1]
-            if i != k-1:
-                products[i].set_sp(x, product_i_minus_1)
-            done = products[i].set_lp(x, product_i_minus_1)
-            if done:
-                break
+    products = init_products(A, k)
+    for x_position in range(len(A)):
+        for product_index in reversed(range(k)):
+            if product_index > x_position:
+                continue    # not enough x to update product
+            # when product_index <= x_position, there's enough x to calc a new product of that length
+            product_of_1_fewer_int \
+                = get_product_of_1_fewer_int(products, product_index)
+            products[product_index].set_sp(A[x_position], product_of_1_fewer_int)
+            products[product_index].set_lp(A[x_position], product_of_1_fewer_int)
     return products[-1].lp
 
 def highest_product(A):
@@ -71,17 +79,17 @@ class TestHighestProduct(TestCase):
         assert highest_product([-8, 1, 2, 3, 4, 5]) == 3 * 4 * 5
 
         # 2 -ve numbers
+        # either the 3 largest +ve numbers or
+        # product or the largest +ve number * two most -ve
         assert highest_product([-8, -7, 1, 2, 3, 4, 5]) == (-8) * (-7) * 5
-        # either the 3 largest => product or the largest * two most -ve
 
         # 2 - ve numbers + an 0
         assert highest_product([-10, 4, 8, 0, 12, -5]) == (-10)*12*(-5)
 
     def test_2_positive_numbers(self):
-        # less than 2 -ve number
-        # has 0
+        # less than 2 -ve number, also A has 0
         assert highest_product([-11, 0, 4, 5]) == 0
-        # doesn't have 0
+        # A doesn't have 0
         assert highest_product([-11, -8, 4, 5]) == (-11)*(-8)*5
 
         # at least 2 -ve numbers
@@ -93,7 +101,7 @@ class TestHighestProduct(TestCase):
         # has 0, no else because 1 pos 1 neg has to have 0
         assert highest_product([-11, 0, 5]) == 0
         # at least 2 -ve numbers
-        assert highest_product([-4, -3, -2, -1, 5]) == -3*(-4)*5
+        self.assertEqual(highest_product([-4, -3, -2, -1, 5]), -3*(-4)*5)
         # if >= two -ve => largest * two most -ve
 
     def test_no_positive_number(self):
